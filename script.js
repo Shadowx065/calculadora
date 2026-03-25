@@ -2,6 +2,7 @@ const input = document.getElementById("permisoInput");
 const usuario = document.getElementById("usuario");
 const grupo = document.getElementById("grupo");
 const otros = document.getElementById("otros");
+const limpiarBtn = document.getElementById("limpiarBtn");
 
 // Mapeo número → texto
 const permisosTexto = {
@@ -15,25 +16,14 @@ const permisosTexto = {
     7: "Lectura, Escritura y Ejecución"
 };
 
-// Mapeo texto → número
-const permisosNumero = {
-    "Sin permisos": 0,
-    "Ejecución": 1,
-    "Escritura": 2,
-    "Escritura y Ejecución": 3,
-    "Lectura": 4,
-    "Lectura y Ejecución": 5,
-    "Lectura y Escritura": 6,
-    "Lectura, Escritura y Ejecución": 7
-};
-
-// Llenar selects al iniciar
+// Llenar selects
 function llenarSelect(select) {
-    select.innerHTML = "";
+    select.innerHTML = '<option value="">---</option>';
+
     for (let key in permisosTexto) {
         let option = document.createElement("option");
-        option.textContent = permisosTexto[key];
         option.value = key;
+        option.textContent = permisosTexto[key];
         select.appendChild(option);
     }
 }
@@ -42,70 +32,32 @@ llenarSelect(usuario);
 llenarSelect(grupo);
 llenarSelect(otros);
 
-// Actualizar selects desde input
+// INPUT → SELECTS
 input.addEventListener("input", () => {
-    // Eliminar todo lo que no sea 0-7
-    input.value = input.value.replace(/[^0-7]/g, "");
+    input.value = input.value.replace(/[^0-7]/g, "").slice(0, 3);
 
-    // Limitar a 3 dígitos
-    input.value = input.value.slice(0, 3);
-
-    let valor = input.value;
-
-    if (valor.length === 3) {
-        let u = valor[0];
-        let g = valor[1];
-        let o = valor[2];
-
-        if (permisosTexto[u] && permisosTexto[g] && permisosTexto[o]) {
-            usuario.value = u;
-            grupo.value = g;
-            otros.value = o;
-        }
+    if (input.value.length === 3) {
+        usuario.value = input.value[0];
+        grupo.value = input.value[1];
+        otros.value = input.value[2];
     }
 });
 
-// BLOQUEAR CARACTERES NO VÁLIDOS
-input.addEventListener("keypress", (e) => {
-    const char = e.key;
-
-    // Solo permitir números del 0 al 7
-    if (!/[0-7]/.test(char)) {
-        e.preventDefault();
-    }
-
-    // Limitar a 3 caracteres
-    if (input.value.length >= 3) {
-        e.preventDefault();
-    }
-});
-
-// Actualizar input desde selects
+// SELECTS → INPUT
 function actualizarInput() {
-    let u = usuario.value;
-    let g = grupo.value;
-    let o = otros.value;
-
-    if (u !== "" && g !== "" && o !== "") {
-        input.value = `${u}${g}${o}`;
+    if (usuario.value && grupo.value && otros.value) {
+        input.value = `${usuario.value}${grupo.value}${otros.value}`;
     }
 }
 
-const limpiarBtn = document.getElementById("limpiarBtn");
-
-// Función para limpiar todo
-function limpiarTodo() {
-    input.value = "";
-
-    usuario.selectedIndex = 0;
-    grupo.selectedIndex = 0;
-    otros.selectedIndex = 0;
-}
-
-// Evento botón limpiar
-limpiarBtn.addEventListener("click", limpiarTodo);
-
-// Eventos de cambio
 usuario.addEventListener("change", actualizarInput);
 grupo.addEventListener("change", actualizarInput);
 otros.addEventListener("change", actualizarInput);
+
+// LIMPIAR TODO
+limpiarBtn.addEventListener("click", () => {
+    input.value = "";
+    usuario.value = "";
+    grupo.value = "";
+    otros.value = "";
+});
