@@ -91,6 +91,20 @@ function actualizarInput() {
     }
 }
 
+const limpiarBtn = document.getElementById("limpiarBtn");
+
+// Función para limpiar todo
+function limpiarTodo() {
+    input.value = "";
+
+    usuario.selectedIndex = 0;
+    grupo.selectedIndex = 0;
+    otros.selectedIndex = 0;
+}
+
+// Evento botón limpiar
+limpiarBtn.addEventListener("click", limpiarTodo);
+
 // Eventos de cambio
 usuario.addEventListener("change", actualizarInput);
 grupo.addEventListener("change", actualizarInput);
